@@ -37,7 +37,7 @@ dependencies = [
     "liftover",
     "hydra-core",
 ]
-requires-python = "==3.10"
+requires-python = ">=3.8"
 readme = "README.md"
 license = {text = "MIT"}
 
