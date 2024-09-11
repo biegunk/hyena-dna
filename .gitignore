@@ -124,3 +124,6 @@ dmypy.json
 
 # pdm
 .pdm-python
+
+# singularity
+hyna.sif
