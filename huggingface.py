@@ -224,7 +224,7 @@ def inference_single():
     tokenizer = CharacterTokenizer(
         characters=['A', 'C', 'G', 'T', 'N'],  # add DNA characters, N is uncertain
         model_max_length=max_length + 2,  # to account for special tokens, like EOS
-        add_special_tokens=False,  # we handle special tokens elsewhere
+        # add_special_tokens=False,  # we handle special tokens elsewhere
         padding_side='left', # since HyenaDNA is causal, we pad on the left
     )
 
