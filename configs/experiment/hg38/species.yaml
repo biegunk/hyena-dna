@@ -65,7 +65,7 @@ optimizer:
   weight_decay: 0.1
 
 train:
-  gpu_mem: 24
+  gpu_mem: ${eval:"round(float(__import__('subprocess').check_output('nvidia-smi -i 0 --query-gpu=memory.total --format=csv,noheader,nounits', shell=True).strip().decode()) / 1000)"}
   seed: 2222
   # use 256 < 64k seqs, use 128 > 64k seqs
   # adjust `lr` to keep 8:1 ratio between global_batch_size:lr
