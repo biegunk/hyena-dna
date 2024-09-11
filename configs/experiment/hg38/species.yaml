@@ -34,6 +34,7 @@ model:
     lr: ${optimizer.lr}
     wd: 0.0
     lr_pos_emb: 0.0
+    filter_cls: "rotssm"
 
 task:
   metrics:

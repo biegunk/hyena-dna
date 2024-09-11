@@ -1,16 +1,12 @@
 import math
-import sys
 
-from re import U
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from functools import partial
-
-from einops import rearrange, repeat
+from einops import rearrange
 
 try:
-    from src.ops.fftconv import fftconv_ref, fftconv_func, fftconv_heads_ref
+    from src.ops.fftconv import fftconv_func, fftconv_heads_ref, fftconv_ref
 
 except ImportError:
     fftconv_func = None
@@ -21,9 +17,9 @@ except ImportError:
     FusedDense = None
 
 import src.utils.registry as registry
-from src.utils.train import OptimModule
-from src.utils.config import instantiate, auto_assign_attrs
 from src.models.nn import Activation
+from src.utils.config import auto_assign_attrs, instantiate
+from src.utils.train import OptimModule
 
 
 class FFTConvFuncv2(torch.autograd.Function):
@@ -69,7 +65,7 @@ def fftconv_ref(u, k, D, dropout_mask, gelu=True, k_rev=None, bidirectional=Fals
         padded_length = seqlen + 2 * (seqlen // 2)
         pad_before = padded_length // 2 - (seqlen // 2)
         pad_after = padded_length - seqlen - pad_before
-        padded_u = F.pad(u, (pad_before, pad_after), mode='constant', value=0)
+        padded_u = F.pad(u, (pad_before, pad_after), mode="constant", value=0)
         u_f = torch.fft.rfft(padded_u.to(dtype=k.dtype), n=fft_size)
     else:
         u_f = torch.fft.rfft(u.to(dtype=k.dtype), n=fft_size)
@@ -258,7 +254,14 @@ class HyenaFilter(OptimModule):
                 force_fp16_output=torch.is_autocast_enabled(),
             )
         else:
-            y = fftconv_ref(x, k, bias, dropout_mask=None, gelu=False, bidirectional=self.bidirectional)
+            y = fftconv_ref(
+                x,
+                k,
+                bias,
+                dropout_mask=None,
+                gelu=False,
+                bidirectional=self.bidirectional,
+            )
             # y = (
             #     FFTConvFuncv2.apply(x, k.to(dtype=torch.float32))
             #     + bias.unsqueeze(-1) * x
@@ -368,16 +371,22 @@ class HyenaOperator(nn.Module):
             padding=self.short_filter_order - 1,
         )
 
+        self.filter_name = filter_cls
         filter_cls = instantiate(registry.layer, filter_cls, partial=True)
 
-        self.filter_fn = filter_cls(
-            self.head_dim * self.inner_factor * (self.order - 1),
-            order=self.filter_order,
-            seq_len=self.l_max,
-            channels=1,
-            dropout=self.filter_dropout,
-            **filter_args,
-        )
+        if self.filter_name == "rotssm":
+            self.filter_fn = [
+                filter_cls(self.d_model, **filter_args) for _ in range(self.order)
+            ]
+        else:
+            self.filter_fn = filter_cls(
+                self.head_dim * self.inner_factor * (self.order - 1),
+                order=self.filter_order,
+                seq_len=self.l_max,
+                channels=1,
+                dropout=self.filter_dropout,
+                **filter_args,
+            )
         if self.jit_filter:
             self.filter_fn = torch.jit.script(self.filter_fn, self.L)
 
@@ -402,10 +411,15 @@ class HyenaOperator(nn.Module):
         )
 
         *x, v = uc.split(self.d_model, dim=2)
-        k = self.filter_fn.filter(l_filter)
+        if self.filter_name == "rotssm":
+            k = None
+        else:
+            k = self.filter_fn.filter(l_filter)
 
-        # `c` is always 1 by default
-        k = rearrange(k, "c l (v o) -> c o v l", v=self.head_dim, o=self.order - 1)[0]
+            # `c` is always 1 by default
+            k = rearrange(k, "c l (v o) -> c o v l", v=self.head_dim, o=self.order - 1)[
+                0
+            ]
 
         bias = rearrange(
             self.filter_fn.bias, "(v o) -> o v", v=self.head_dim, o=self.order - 1
@@ -420,7 +434,12 @@ class HyenaOperator(nn.Module):
                 v = self.dropout(v * x_i)
 
             # the bias term is broadcasted. Last dimension (l) is handled by fftconv
-            v = self.filter_fn(v, l_filter, k=k[o], bias=bias[o, None, :, None])
+            if self.filter_name == "rotssm":
+                print(v.shape)
+                exit()
+                v = self.filter_fn[o](v) + bias[o, None, :, None]
+            else:
+                v = self.filter_fn(v, l_filter, k=k[o], bias=bias[o, None, :, None])
 
             if self.post_order_ffn:
                 w = self.ord_proj_w[o]
@@ -446,4 +465,3 @@ class HyenaOperator(nn.Module):
     @property
     def d_output(self):
         return self.d_model
-

@@ -1,0 +1,49 @@
+[project]
+name = "hyena-dna"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Kai Biegun", email = "k.biegun@hotmail.co.uk"},
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "pandas",
+    "scikit-learn",
+    "matplotlib",
+    "tqdm",
+    "rich",
+    "pytorch-lightning",
+    "hydra-core",
+    "omegaconf",
+    "wandb",
+    "einops",
+    "opt_einsum",
+    "cmake",
+    "transformers",
+    "torchvision",
+    "timm",
+    "prettytable",
+    "numerize",
+    "git-lfs",
+    "torchtext",
+    "datasets",
+    "pyfaidx",
+    "polars",
+    "genomic-benchmarks",
+    "loguru",
+    "liftover",
+    "accelerated-scan",
+    "hydra-core",
+]
+requires-python = "==3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
