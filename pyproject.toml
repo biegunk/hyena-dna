@@ -6,6 +6,9 @@ authors = [
     {name = "Kai Biegun", email = "k.biegun@hotmail.co.uk"},
 ]
 dependencies = [
+    "torch==1.13.0",
+    "torchvision==0.14.0",
+    "torchaudio==0.13.0",
     "numpy",
     "scipy",
     "pandas",
@@ -21,7 +24,6 @@ dependencies = [
     "opt_einsum",
     "cmake",
     "transformers",
-    "torchvision",
     "timm",
     "prettytable",
     "numerize",
@@ -33,7 +35,6 @@ dependencies = [
     "genomic-benchmarks",
     "loguru",
     "liftover",
-    "accelerated-scan",
     "hydra-core",
 ]
 requires-python = "==3.10"
