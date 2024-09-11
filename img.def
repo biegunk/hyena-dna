@@ -1,0 +1,62 @@
+BootStrap: docker
+From: pytorch/pytorch:latest
+
+%environment
+    export PATH=/root/.local/bin:$PATH
+
+%post
+
+    # Install tzdata and add universe repository
+    apt update
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y tzdata
+
+    # Install some basic utilities and python
+    apt update && apt install -y \
+        build-essential \
+        ubuntu-drivers-common \
+        git \
+        wget \
+        vim \
+        curl \
+        zip \
+        zlib1g-dev \
+        unzip \
+        pkg-config \
+        libblas-dev \
+        liblapack-dev \
+        python3-tk \
+        python3-wheel \
+        graphviz \
+        libhdf5-dev \
+        python3.10 \
+        python3.10-dev \
+        python3.10-venv \
+        python3.10-distutils \
+        python3-testresources \
+        swig \
+        google-perftools \
+        pv
+    apt-get clean
+
+    # Link python3.10 to python and python3
+    ln -s /usr/bin/python3.10 /usr/local/bin/python
+    ln -s /usr/bin/python3.10 /usr/local/bin/python3
+
+    # Install pip
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    python3.10 get-pip.py
+    rm get-pip.py
+    python3.10 -m pip --no-cache-dir install --upgrade pip
+
+    # Install pdm
+    #curl -sSL https://pdm-project.org/install-pdm.py | python3 -
+    #export PATH=/root/.local/bin:$PATH
+    ## pdm install 
+    pip install pdm
+    pip install wandb
+    
+    # echo $PWD
+    # cd /cluster/project7/hyena-dna
+    # echo $PWD
+    # pdm install
+
