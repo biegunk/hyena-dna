@@ -40,7 +40,7 @@ layer = {
     "hyena": "src.models.sequence.hyena.HyenaOperator",
     "hyena-filter": "src.models.sequence.hyena.HyenaFilter",
     "vit": "src.models.sequence.mha.VitAttention",
-    "rotssm": "src.models.sequence.kai_layers.RotSSM",
+    "rotssm": "src.models.sequence.long_conv.RotSSM",
 }
 
 callbacks = {
