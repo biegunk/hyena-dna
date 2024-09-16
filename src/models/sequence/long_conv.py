@@ -287,7 +287,7 @@ class RotSSM(nn.Module):
         self,
         d_model: int = 128,  # devisible by heads
         lru_dim: int = 64,  # devisible by heads
-        nheads: int = 64,  # apply model in parallel
+        nheads: int = 32,  # apply model in parallel
         r_min: float = 0.9,
         r_max: float = 0.999,
         max_phase: float = 6.28,
