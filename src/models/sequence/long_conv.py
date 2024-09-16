@@ -391,12 +391,16 @@ class RotSSM(nn.Module):
 
     def mat_init(self, lru_dim, hidden_dim):
         # Glorot initialized Input/Output projection matrices
-        B = torch.randn((lru_dim, hidden_dim)) / torch.sqrt(hidden_dim + lru_dim)
+        B = torch.randn((lru_dim, hidden_dim)) / torch.sqrt(
+            torch.tensor(hidden_dim + lru_dim)
+        )
         return B
 
     def ortho_mat_init(self, lru_dim, hidden_dim):
         # Glorot initialized Input/Output projection matrices
-        B = torch.randn((lru_dim, hidden_dim)) / torch.sqrt(hidden_dim + lru_dim)
+        B = torch.randn((lru_dim, hidden_dim)) / torch.sqrt(
+            torch.tensor(hidden_dim + lru_dim)
+        )
         return B
 
     @staticmethod
