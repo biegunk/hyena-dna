@@ -285,8 +285,8 @@ def associative_scan(fn: Callable, elems):
 class RotSSM(nn.Module):
     def __init__(
         self,
+        d_model: int = 128,  # devisible by heads
         lru_dim: int = 64,  # devisible by heads
-        hidden_dim: int = 128,  # devisible by heads
         nheads: int = 64,  # apply model in parallel
         r_min: float = 0.9,
         r_max: float = 0.999,
@@ -294,10 +294,11 @@ class RotSSM(nn.Module):
         bidirectional: bool = False,
         step_rescale: float = 0.0,
         transposed: bool = True,
+        **kwargs,
     ):
         super().__init__()
         self.lru_dim = lru_dim
-        self.hidden_dim = hidden_dim
+        self.hidden_dim = d_model
         self.H = nheads
         self.N = self.lru_dim // self.H
         assert self.N % 2 == 0, "N should be even"
