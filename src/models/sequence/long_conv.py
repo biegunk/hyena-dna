@@ -384,8 +384,9 @@ class RotSSM(nn.Module):
         """
         u1 = torch.rand(H)
         # double exponential
-        nu_log = torch.log(-torch.log(r_max)) + u1 * (
-            torch.log(-torch.log(r_min)) - torch.log(-torch.log(r_max))
+        nu_log = torch.log(-torch.log(torch.tensor(r_max))) + u1 * (
+            torch.log(-torch.log(torch.tensor(r_min)))
+            - torch.log(-torch.log(torch.tensor(r_max)))
         )
         return nu_log
 
