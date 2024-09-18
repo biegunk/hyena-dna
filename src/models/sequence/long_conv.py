@@ -334,6 +334,8 @@ class RotSSM(nn.Module):
         Returns: same shape as u
         """
         print(u.shape)
+        u_shape = u.shape
+        u = u.squeeze()
         if self.transposed:
             batch_sz, hidden_dim, T = u.shape
             u = u.transpose(1, 2)
@@ -373,6 +375,8 @@ class RotSSM(nn.Module):
 
         if self.transposed:
             y = y.transpose(1, 2)
+
+        y = y.reshape(u_shape)
         return y, None
 
     def theta_init(self, N, max_phase):
