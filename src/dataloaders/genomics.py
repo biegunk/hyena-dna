@@ -100,7 +100,7 @@ class HG38(SequenceDataset):
             self.tokenizer = CharacterTokenizer(
                 characters=['A', 'C', 'G', 'T', 'N'],
                 model_max_length=self.max_length + 2,  # add 2 since default adds eos/eos tokens, crop later
-                # add_special_tokens=False,
+                add_special_tokens=False,
             )
         elif self.tokenizer_name == 'bpe':
             print("**using pretrained AIRI tokenizer**")
@@ -271,7 +271,7 @@ class GenomicBenchmark(HG38):
             self.tokenizer = CharacterTokenizer(
                 characters=['A', 'C', 'G', 'T', 'N'],
                 model_max_length=self.max_length + 2,  # add 2 since default adds eos/eos tokens, crop later
-                # add_special_tokens=False,
+                add_special_tokens=False,
                 padding_side=self.padding_side,
             )
         
@@ -355,7 +355,7 @@ class NucleotideTransformer(HG38):
             self.tokenizer = CharacterTokenizer(
                 characters=['A', 'C', 'G', 'T', 'N'],
                 model_max_length=self.max_length + 2,  # add 2 since default adds eos/eos tokens, crop later
-                # add_special_tokens=False,
+                add_special_tokens=False,
                 padding_side=self.padding_side,
             )
 
@@ -434,7 +434,7 @@ class ChromatinProfile(HG38):
             self.tokenizer = CharacterTokenizer(
                 characters=['A', 'C', 'G', 'T', 'N'],
                 model_max_length=self.max_length + 2,  # add 2 since default adds eos/eos tokens, crop later
-                # add_special_tokens=False,
+                add_special_tokens=False,
             )
         elif self.tokenizer_name == 'bpe':
             print("**using pretrained AIRI tokenizer**")
@@ -518,7 +518,7 @@ class Species(HG38):
             self.tokenizer = CharacterTokenizer(
                 characters=['A', 'C', 'G', 'T', 'N'],
                 model_max_length=self.max_length + 2,  # add 2 since default adds eos/eos tokens, crop later
-                # add_special_tokens=False,
+                add_special_tokens=False,
             )
         elif self.tokenizer_name == 'bpe':
             print("**using pretrained AIRI tokenizer**")
@@ -628,7 +628,7 @@ class ICLGenomics(HG38):
             self.tokenizer = CharacterTokenizer(
                 characters=self.characters,
                 model_max_length=self.max_length + 2,  # add 2 since default adds eos/eos tokens, crop later
-                # add_special_tokens=False,
+                add_special_tokens=False,
             )
 
         self.vocab_size = len(self.tokenizer)
@@ -705,7 +705,7 @@ class HG38Fixed(HG38):
         tokenizer = CharacterTokenizer(
             characters=['A', 'C', 'G', 'T', 'N'],
             model_max_length= self.max_length +  2,  # add 2 since default adds eos/eos tokens, crop later
-            # add_special_tokens=False,
+            add_special_tokens=False,
         )
 
         # we only need one

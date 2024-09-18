@@ -231,7 +231,7 @@ if __name__ == '__main__':
     tokenizer = CharacterTokenizer(
         characters=['A', 'C', 'G', 'T', 'N'],
         model_max_length=max_length,
-        # add_special_tokens=False,
+        add_special_tokens=False,
         padding_side=padding_side,
     )
 

@@ -159,7 +159,7 @@ class HG38Inference:
         tokenizer = CharacterTokenizer(
             characters=['A', 'C', 'G', 'T', 'N'],
             model_max_length=self.max_seq_len + 2,  # add 2 since default adds eos/eos tokens, crop later
-            # add_special_tokens=False,
+            add_special_tokens=False,
         )
 
         return backbone, decoder, tokenizer
