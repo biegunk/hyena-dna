@@ -346,9 +346,15 @@ class RotSSM(nn.Module):
         gamma_log = -torch.exp(self.gamma_log)
         gamma = torch.exp(gamma_log)
 
-        trace_per_head = torch.trace(
-            torch.einsum("HDd,HAd->HDA", self.B, self.B), axis1=-2, axis2=-1
+        # trace_per_head = torch.trace(
+        #     torch.einsum("HDd,HAd->HDA", self.B, self.B), axis1=-2, axis2=-1
+        # )
+        trace_per_head = (
+            torch.einsum("HDd,HAd->HDA", self.B, self.B)
+            .diagonal(offset=0, dim1=-2, dim2=-1)
+            .sum(dim=-1)
         )
+
         norm = torch.sqrt((1 - gamma**2) / trace_per_head)  #  H / H elementwise -> H
         B_norm = torch.einsum("H,HnD->HnD", norm, self.B)
         P = torch.matrix_exp(self.P - self.P.transpose(1, 2))
@@ -454,3 +460,33 @@ class RotSSM(nn.Module):
         R = R.unsqueeze(0).repeat([T] + [1 for _ in range(len(R_shape) - 1)])
         _, _, res = associative_scan(binf, (gammas, R, Us), reverse=reverse)
         return res
+
+
+# class RotSSMFilter(nn.Module):
+#     def __init__(
+#         self,
+#         d_model: int = 128,  # devisible by heads
+#         lru_dim: int = 64,  # devisible by heads
+#         nheads: int = 32,  # apply model in parallel
+#         r_min: float = 0.9,
+#         r_max: float = 0.999,
+#         max_phase: float = 6.28,
+#         bidirectional: bool = False,
+#         step_rescale: float = 0.0,
+#         transposed: bool = True,
+#         **kwargs,
+#     ):
+#         conv = RotSSM(
+#             d_model=d_model,  # devisible by heads
+#             lru_dim=lru_dim,  # devisible by heads
+#             nheads=nheads,  # apply model in parallel
+#             r_min=r_min,
+#             r_max=r_max,
+#             max_phase=max_phase,
+#             bidirectional=bidirectional,
+#             step_rescale=step_rescale,
+#             transposed=transposed,
+#             **kwargs,
+#         )
+#         self.d_model = d_model
+#         self.bias = nn.Parameter(torch.randn(self.d_model))
