@@ -355,7 +355,9 @@ class RotSSM(nn.Module):
             .sum(dim=-1)
         )
 
-        norm = torch.sqrt((1 - gamma**2) / trace_per_head)  #  H / H elementwise -> H
+        norm = torch.sqrt((1 - gamma**2) / trace_per_head).to(
+            u.device
+        )  #  H / H elementwise -> H
         B_norm = torch.einsum("H,HnD->HnD", norm, self.B)
         P = torch.matrix_exp(self.P - self.P.transpose(1, 2))
         # apply P.T to Bx_t
