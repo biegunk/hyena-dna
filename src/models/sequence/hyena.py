@@ -421,9 +421,9 @@ class HyenaOperator(nn.Module):
                 0
             ]
 
-        bias = rearrange(
-            self.filter_fn.bias, "(v o) -> o v", v=self.head_dim, o=self.order - 1
-        )
+            bias = rearrange(
+                self.filter_fn.bias, "(v o) -> o v", v=self.head_dim, o=self.order - 1
+            )
 
         for o, x_i in enumerate(reversed(x[1:])):
             if self.outer_mixing:
