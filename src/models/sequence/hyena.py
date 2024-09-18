@@ -435,9 +435,8 @@ class HyenaOperator(nn.Module):
 
             # the bias term is broadcasted. Last dimension (l) is handled by fftconv
             if self.filter_name == "rotssm":
-                print(v.shape)
-                exit()
-                v = self.filter_fn[o](v) + bias[o, None, :, None]
+                # print(v.shape)
+                v = self.filter_fn[o](v)  # + bias[o, None, :, None]
             else:
                 v = self.filter_fn(v, l_filter, k=k[o], bias=bias[o, None, :, None])
 
